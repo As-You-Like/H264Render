@@ -17,6 +17,7 @@
 #define __STDC_CONSTANT_MACROS
 extern "C"
 {
+
 #include "libavcodec/avcodec.h" 
 };
 
@@ -29,9 +30,11 @@ const int BitsPerPoint_YV12 = 12;
 const int DefaultFrameRate = 30;
 
 HWND VideoRenderHandle;
-//Total render area in render target.
+//Whole client area in render target.
 RECT VideoViewport;
-//Current render area in render viewport.
+//Original size of the previous decoded video frame.
+int VideoWidth, VideoHeight;
+//Current render area where video is rendered within.
 RECT VideoRenderArea;
 int VideoFrameRate = DefaultFrameRate;
 
@@ -62,7 +65,7 @@ void releaseRender();
 
 @param videoRenderHandle, handle of the render target.
 @param frameRate frame rate, max value is 1000.
-		Fill ZERO when use default(30),.
+		Fill ZERO when use default(30).
 		Fill negative value to use realtime rendering, then Render will not wait interval time between frames.
 @param videoWidth width of the video, fill ZERO when does not know.
 @param videoHeight height of the video, fill ZERO when does not know.

@@ -253,10 +253,20 @@ void FeedDecoder(byte* const buffer, int const size)
 		}
 		if (_isFirstFrame) {
 			_isFirstFrame = false;
+			VideoWidth = _decodedFrame->width;
+			VideoHeight = _decodedFrame->height;
+			adjustRenderSize(VideoWidth, VideoHeight);
+
 			initRender();
 		}
 
-		//todo: We should recreate render device when the size of viewport or rendering image is changed.
+		if (_decodedFrame->width != VideoWidth || _decodedFrame->height != VideoHeight) {
+			VideoWidth = _decodedFrame->width;
+			VideoHeight = _decodedFrame->height;
+			adjustRenderSize(VideoWidth, VideoHeight);
+		}
+
+		//todo: We should recreate render device when the size of viewport is changed to fit the new client size.
 		render(_decodedFrame);
 
 		if (_frameTime > 0) {
