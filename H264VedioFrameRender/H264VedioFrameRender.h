@@ -3,7 +3,7 @@
 * 雷霄骅
 * 中国传媒大学/数字电视技术
 *
-* Source code is get from here:
+* Original source code will be found here:
 * http://blog.csdn.net/leixiaohua1020/article/details/40279297
 * http://blog.csdn.net/leixiaohua1020/article/details/42181571
 */
