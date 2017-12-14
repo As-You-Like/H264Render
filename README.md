@@ -8,3 +8,5 @@ http://blog.csdn.net/leixiaohua1020/article/details/42181571
 
 # H264Render
 Render H264 frames from file or network buffer.
+
+Only debug is setup in project.
