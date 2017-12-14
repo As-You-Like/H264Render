@@ -8,9 +8,9 @@ namespace WindowsFormsApp1
         const string H264Decoder = "H264VedioFrameRender.dll";
 
         /// <summary>
-        /// Initialize the decoder and render.
+        /// Initialize the decoder and render device.
         /// </summary>
-        /// <param name="videoRenderHandle">Handle will render video on.</param>
+        /// <param name="videoRenderHandle">Handle where video will be rendered on.</param>
         /// <param name="frameRate">Frame rate of video, Zero for default(30), nagetive for realtime(not interval between frames).</param>
         /// <param name="videoWidth">Fill video width if konw, or fill ZERO.</param>
         /// <param name="videoHeight"Fill video height if konw, or fill ZERO.></param>
@@ -36,7 +36,7 @@ namespace WindowsFormsApp1
         public static extern void Decode(byte[] buffer, int size);
 
         /// <summary>
-        /// Release render and decoder.
+        /// Release render device and decoder.
         /// </summary>
         /// <remarks>
         /// This method is not thread safe, you must stop <see cref="Decode/> before <see cref="Release"/>.
