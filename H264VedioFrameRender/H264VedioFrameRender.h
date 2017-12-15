@@ -49,12 +49,14 @@ AVCodecParserContext *pCodecParserCtx = NULL;
 
 //For internal use only, this field is used to contain decoded frame while decoding video.
 AVFrame	*_decodedFrame;
-//For internal use only, will init render on first frame.
-bool _isFirstFrame = true;
 //For internal use only, this field is only calculated on frame rate is set on init().
 int _frameTime = 1000 / VideoFrameRate;
 
-int initRender();
+/* Initialize the render device.
+
+@warning This method is only valid when VideoWidth and VideoHeight has valid value.
+*/
+bool initRender();
 //Adjust the VideoRenderArea in VideoViewport, will keep the w-h ratio while adjusting.
 void adjustRenderSize(int videoWidth, int videoHeight);
 bool render(AVFrame* const pFrame);
@@ -79,6 +81,14 @@ extern "C" _declspec(dllexport) bool InitDecoder(HWND const videoRenderHandle, i
 @param Byte size of the 264 data in buffer.
 */
 extern "C" _declspec(dllexport) void FeedDecoder(byte* const buffer, int const size);
+
+/* Reset viewport of video render device.
+   Function will get client size from VideoRenderHandle, and create render device again.
+
+@warning This method is only valid while rendering.
+@warning This method is not thread safe.
+*/
+extern "C" _declspec(dllexport) void ResetViewport();
 
 /* Release decoder and render.
 @warning This function is not thread safe!

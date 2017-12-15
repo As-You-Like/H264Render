@@ -47,24 +47,31 @@ IDirect3DSurface9* _surface = NULL;
 
 void releaseRender()
 {
-	if (_surface)
+	if (_surface) {
 		_surface->Release();
-	if (_device)
+	}
+
+	if (_device) {
 		_device->Release();
-	if (_d3d)
+	}
+
+	if (_d3d) {
 		_d3d->Release();
+	}
 }
 
 //todo: try the dangerous part.
-int initRender()
+bool initRender()
 {
-	HRESULT lRet;
+	if (VideoWidth <= 0 || VideoHeight <= 0) {
+		return false;
+	}
+
 	releaseRender();
 
 	_d3d = Direct3DCreate9(D3D_SDK_VERSION);
-	if (_d3d == NULL)
-	{
-		return -1;
+	if (_d3d == NULL) {
+		return false;
 	}
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -74,23 +81,16 @@ int initRender()
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
 
 	GetClientRect(VideoRenderHandle, &VideoViewport);
-	adjustRenderSize(pCodecCtx->width, pCodecCtx->height);
+	adjustRenderSize(VideoWidth, VideoHeight);
 
-	lRet = _d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, VideoRenderHandle, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &_device);
-	if (FAILED(lRet))
-		return -1;
+	if (FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, VideoRenderHandle, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &_device))) {
+		return false;
+	}
+	if (FAILED(_device->CreateOffscreenPlainSurface(VideoWidth, VideoHeight, RenderFormat, D3DPOOL_DEFAULT, &_surface, NULL))) {
+		return false;
+	}
 
-	lRet = _device->CreateOffscreenPlainSurface(
-		pCodecCtx->width, pCodecCtx->height,
-		RenderFormat,
-		D3DPOOL_DEFAULT,
-		&_surface,
-		NULL);
-
-	if (FAILED(lRet))
-		return -1;
-
-	return 0;
+	return true;
 }
 
 void adjustRenderSize(int videoWidth, int videoHeight)
@@ -116,17 +116,15 @@ void adjustRenderSize(int videoWidth, int videoHeight)
 
 bool render(AVFrame* const pFrame)
 {
-	HRESULT lRet;
 	if (_surface == NULL) {
 		return false;
 	}
 	D3DLOCKED_RECT d3d_rect;
-	lRet = _surface->LockRect(&d3d_rect, NULL, D3DLOCK_DONOTWAIT);
-	if (FAILED(lRet)) {
+	if (FAILED(_surface->LockRect(&d3d_rect, NULL, D3DLOCK_DONOTWAIT))) {
 		return false;
 	}
 
-	byte * pDest = (BYTE *)d3d_rect.pBits;
+	byte* pDest = (byte*)d3d_rect.pBits;
 	int stride = d3d_rect.Pitch;
 
 	int	w2 = pFrame->width / 2, h2 = pFrame->height / 2;
@@ -150,8 +148,7 @@ bool render(AVFrame* const pFrame)
 		}
 	}
 
-	lRet = _surface->UnlockRect();
-	if (FAILED(lRet)) {
+	if (FAILED(_surface->UnlockRect())) {
 		return false;
 	}
 
@@ -187,13 +184,13 @@ bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const vi
 	}
 
 	if (videoWidth > 0) {
-		pCodecCtx->width = 1280;
-		pCodecCtx->coded_width = 1280;
+		pCodecCtx->width = videoWidth;
+		pCodecCtx->coded_width = videoWidth;
 	}
 
 	if (videoHeight > 0) {
-		pCodecCtx->height = 720;
-		pCodecCtx->coded_height = 720;
+		pCodecCtx->height = videoHeight;
+		pCodecCtx->coded_height = videoHeight;
 	}
 
 	pCodecCtx->pix_fmt = DecoderOutputType;
@@ -217,8 +214,9 @@ bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const vi
 		VideoFrameRate = 1000;
 	}
 	_frameTime = 1000 / frameRate;
+	VideoWidth = 0;
+	VideoHeight = 0;
 
-	_isFirstFrame = true;
 	IsWorking = true;
 
 	return true;
@@ -251,12 +249,8 @@ void FeedDecoder(byte* const buffer, int const size)
 		if (decodeResult <= 0 || got_picture == 0) {
 			continue;
 		}
-		if (_isFirstFrame) {
-			_isFirstFrame = false;
-			VideoWidth = _decodedFrame->width;
-			VideoHeight = _decodedFrame->height;
-			adjustRenderSize(VideoWidth, VideoHeight);
 
+		if (_device == NULL) {
 			initRender();
 		}
 
@@ -266,7 +260,6 @@ void FeedDecoder(byte* const buffer, int const size)
 			adjustRenderSize(VideoWidth, VideoHeight);
 		}
 
-		//todo: We should recreate render device when the size of viewport is changed to fit the new client size.
 		render(_decodedFrame);
 
 		if (_frameTime > 0) {
@@ -275,21 +268,31 @@ void FeedDecoder(byte* const buffer, int const size)
 	}
 }
 
+void ResetViewport()
+{
+	releaseRender();
+	initRender();
+}
+
 void ReleaseDecoder()
 {
 	IsWorking = false;
 
 	releaseRender();
 
-	if (pCodecParserCtx)
+	if (pCodecParserCtx) {
 		av_parser_close(pCodecParserCtx);
+	}
 
-	if (pCodecCtx)
+	if (pCodecCtx) {
 		avcodec_close(pCodecCtx);
+	}
 
-	if (pCodecCtx)
+	if (pCodecCtx) {
 		av_free(pCodecCtx);
+	}
 
-	if (_decodedFrame)
+	if (_decodedFrame) {
 		av_frame_free(&_decodedFrame);
+	}
 }
