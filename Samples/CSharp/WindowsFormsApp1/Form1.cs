@@ -9,7 +9,7 @@ namespace WindowsFormsApp1
     {
         private const string H264File = "D:\\temp\\720.h264";
 
-        bool _isRendering;
+        bool _isRendering, _resizeRequesting;
 
         public Form1()
         {
@@ -35,6 +35,12 @@ namespace WindowsFormsApp1
             {
                 position += len;
                 H264Player.Decode(buffer, len);
+
+                if (_resizeRequesting)
+                {
+                    H264Player.ResetViewport();
+                    _resizeRequesting = false;
+                }
             }
             H264Player.Release();
         }
@@ -47,6 +53,11 @@ namespace WindowsFormsApp1
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            _resizeRequesting = true;
         }
     }
 }

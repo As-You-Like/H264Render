@@ -36,6 +36,15 @@ namespace WindowsFormsApp1
         public static extern void Decode(byte[] buffer, int size);
 
         /// <summary>
+        /// Reset render viewport, this method is not thread safe.
+        /// </summary>
+        /// <remarks>
+        /// This method is only valid when video is rendering.
+        /// </remarks>
+        [DllImport(H264Decoder, EntryPoint = "ResetViewport", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ResetViewport();
+
+        /// <summary>
         /// Release render device and decoder.
         /// </summary>
         /// <remarks>
