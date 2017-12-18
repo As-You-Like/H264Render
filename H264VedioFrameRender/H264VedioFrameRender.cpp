@@ -223,6 +223,7 @@ bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const vi
 }
 
 //todo: buffer maybe unsafe or not accessable, so..
+//todo: this method is not thread safe as feed while initializing may cause crash.
 void FeedDecoder(byte* const buffer, int const size)
 {
 	AVPacket packet;
@@ -262,6 +263,7 @@ void FeedDecoder(byte* const buffer, int const size)
 			VideoHeight = _decodedFrame->height;
 			releaseRender();
 			initRender();
+			_isViewportResetRequired = false;
 		}
 		//Video size changed.
 		else if (_decodedFrame->width != VideoWidth || _decodedFrame->height != VideoHeight) {
