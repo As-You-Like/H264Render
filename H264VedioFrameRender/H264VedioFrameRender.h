@@ -51,7 +51,7 @@ AVCodecParserContext *pCodecParserCtx = NULL;
 AVFrame	*_decodedFrame;
 //For internal use only, this field is only calculated on frame rate is set on init().
 int _frameTime = 1000 / VideoFrameRate;
-//For internal use only, this field is set true when ResetViewport() is called, then we'll reset render devices on next frame.
+//For internal use only, this field is set true when ResetViewport() is called.
 bool _isViewportResetRequired = false;
 
 /* Initialize the render device.
@@ -84,8 +84,8 @@ extern "C" _declspec(dllexport) bool InitDecoder(HWND const videoRenderHandle, i
 */
 extern "C" _declspec(dllexport) void FeedDecoder(byte* const buffer, int const size);
 
-/* Reset viewport of video render device.
-   Function will get client size from VideoRenderHandle, and create render device again.
+/* Reset viewport of video render device on next frame.
+   Function will get client size from VideoRenderHandle, and create render device again, this action may take longer time between two frames.
 */
 extern "C" _declspec(dllexport) void ResetViewport();
 
