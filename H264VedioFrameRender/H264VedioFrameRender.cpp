@@ -1,5 +1,3 @@
-//#pragma comment(lib, "d3d9.lib")
-
 #include "H264VedioFrameRender.h"
 
 char filepath_in[] = "D:/temp/720.h264";
