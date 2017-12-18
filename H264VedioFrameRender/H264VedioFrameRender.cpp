@@ -250,11 +250,21 @@ void FeedDecoder(byte* const buffer, int const size)
 			continue;
 		}
 
+		//Not initialized.
 		if (_device == NULL) {
+			VideoWidth = _decodedFrame->width;
+			VideoHeight = _decodedFrame->height;
 			initRender();
 		}
-
-		if (_decodedFrame->width != VideoWidth || _decodedFrame->height != VideoHeight) {
+		//Reseting viewport
+		else if (_isViewportResetRequired) {
+			VideoWidth = _decodedFrame->width;
+			VideoHeight = _decodedFrame->height;
+			releaseRender();
+			initRender();
+		}
+		//Video size changed.
+		else if (_decodedFrame->width != VideoWidth || _decodedFrame->height != VideoHeight) {
 			VideoWidth = _decodedFrame->width;
 			VideoHeight = _decodedFrame->height;
 			adjustRenderSize(VideoWidth, VideoHeight);
@@ -270,8 +280,7 @@ void FeedDecoder(byte* const buffer, int const size)
 
 void ResetViewport()
 {
-	releaseRender();
-	initRender();
+	_isViewportResetRequired = true;
 }
 
 void ReleaseDecoder()
