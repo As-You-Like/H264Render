@@ -1,63 +1,5 @@
 #include "H264VedioFrameRender.h"
 
-char filepath_in[] = "D:/temp/720.h264";
-
-//For test in application mode.
-int main(int argc, char* argv[])
-{
-	InitDecoder((HWND)198886, 30, 0, 0);
-
-	read264File();
-
-	ReleaseDecoder();
-}
-
-//For test.
-void read264File()
-{
-	const int in_buffer_size = 4096;
-
-	int size;
-	byte buffer[in_buffer_size + FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
-
-	FILE *fp_in;
-
-	fp_in = fopen(filepath_in, "rb");
-	if (!fp_in) {
-		printf("Could not open input stream\n");
-		return;
-	}
-
-	while (IsWorking) {
-		size = fread(buffer, 1, in_buffer_size, fp_in);
-		if (size == 0) {
-			break;
-		}
-		FeedDecoder(buffer, size);
-	}
-
-	fclose(fp_in);
-}
-
-IDirect3D9* _d3d = NULL;
-IDirect3DDevice9* _device = NULL;
-IDirect3DSurface9* _surface = NULL;
-
-void releaseRender()
-{
-	if (_surface) {
-		_surface->Release();
-	}
-
-	if (_device) {
-		_device->Release();
-	}
-
-	if (_d3d) {
-		_d3d->Release();
-	}
-}
-
 //todo: try the dangerous part.
 bool initRender()
 {
@@ -89,6 +31,21 @@ bool initRender()
 	}
 
 	return true;
+}
+
+void releaseRender()
+{
+	if (_surface) {
+		_surface->Release();
+	}
+
+	if (_device) {
+		_device->Release();
+	}
+
+	if (_d3d) {
+		_d3d->Release();
+	}
 }
 
 void adjustRenderSize(int videoWidth, int videoHeight)

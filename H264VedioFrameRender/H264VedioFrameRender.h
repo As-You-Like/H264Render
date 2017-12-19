@@ -46,6 +46,10 @@ AVCodec *pCodec;
 AVCodecContext *pCodecCtx = NULL;
 AVCodecParserContext *pCodecParserCtx = NULL;
 
+IDirect3D9* _d3d = NULL;
+IDirect3DDevice9* _device = NULL;
+IDirect3DSurface9* _surface = NULL;
+
 //For internal use only, this field is used to contain decoded frame while decoding video.
 AVFrame	*_decodedFrame;
 //For internal use only, this field is only calculated on frame rate is set on init().
@@ -92,6 +96,3 @@ extern "C" _declspec(dllexport) void ResetViewport();
 @warning This function is not thread safe!
 */
 extern "C" _declspec(dllexport) void ReleaseDecoder();
-
-//For test.
-void read264File();
