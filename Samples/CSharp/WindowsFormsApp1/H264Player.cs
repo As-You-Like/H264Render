@@ -7,6 +7,12 @@ namespace WindowsFormsApp1
     {
         const string H264Decoder = "H264VedioFrameRender.dll";
 
+        [DllImport(H264Decoder, EntryPoint = "Init", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool Init(int streamCount);
+
+        [DllImport(H264Decoder, EntryPoint = "Release", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool Release();
+
         /// <summary>
         /// Initialize the decoder and render device.
         /// </summary>
@@ -20,7 +26,7 @@ namespace WindowsFormsApp1
         /// This method is not thread safe, do not try to <see cref="Init(IntPtr, int, int, int)"/> while decoding or rending.
         /// </remarks>
         [DllImport(H264Decoder, EntryPoint = "InitDecoder", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool Init(IntPtr videoRenderHandle, int frameRate, int videoWidth, int videoHeight);
+        public static extern bool InitDecoder(int streamIndex, IntPtr videoRenderHandle, int frameRate, int videoWidth, int videoHeight);
 
         /// <summary>
         /// Decode data in buffer and render decoded frame on Render handle.
@@ -33,13 +39,13 @@ namespace WindowsFormsApp1
         /// </remarks>
         [DllImport(H264Decoder, EntryPoint = "FeedDecoder", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
 
-        public static extern void Decode(byte[] buffer, int size);
+        public static extern void Decode(int streamIndex, byte[] buffer, int size);
 
         /// <summary>
         /// Reset render viewport.
         /// </summary>
         [DllImport(H264Decoder, EntryPoint = "ResetViewport", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ResetViewport();
+        public static extern void ResetViewport(int streamIndex);
 
         /// <summary>
         /// Release render device and decoder.
@@ -48,6 +54,6 @@ namespace WindowsFormsApp1
         /// This method is not thread safe, you must stop <see cref="Decode/> before <see cref="Release"/>.
         /// </remarks>
         [DllImport(H264Decoder, EntryPoint = "ReleaseDecoder", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void Release();
+        public static extern void ReleaseDecoder(int streamIndex);
     }
 }

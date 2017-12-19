@@ -28,71 +28,82 @@ const int BitsPerPoint_YV12 = 12;
 
 const int DefaultFrameRate = 30;
 
-HWND VideoRenderHandle;
-//Whole client area in render target.
-RECT VideoViewport;
-//Original size of the previous decoded video frame.
-int VideoWidth, VideoHeight;
-//Current render area where video is rendered within.
-RECT VideoRenderArea;
-int VideoFrameRate = DefaultFrameRate;
 
-D3DCOLOR VideoBackColor = D3DCOLOR_XRGB(0, 0, 0);
-//Set false when want to stop decoding work.
-bool IsWorking = true;
+class H264VideoFrameRender {
+private:
+	HWND VideoRenderHandle;
+	//Whole client area in render target.
+	RECT VideoViewport;
+	//Original size of the previous decoded video frame.
+	int VideoWidth, VideoHeight;
+	//Current render area where video is rendered within.
+	RECT VideoRenderArea;
+	int VideoFrameRate = DefaultFrameRate;
 
-//private fields.
-AVCodec *pCodec;
-AVCodecContext *pCodecCtx = NULL;
-AVCodecParserContext *pCodecParserCtx = NULL;
+	D3DCOLOR VideoBackColor = D3DCOLOR_XRGB(0, 0, 0);
 
-IDirect3D9* _d3d = NULL;
-IDirect3DDevice9* _device = NULL;
-IDirect3DSurface9* _surface = NULL;
+	//private fields.
+	AVCodec *pCodec;
+	AVCodecContext *pCodecCtx = NULL;
+	AVCodecParserContext *pCodecParserCtx = NULL;
 
-//For internal use only, this field is used to contain decoded frame while decoding video.
-AVFrame	*_decodedFrame;
-//For internal use only, this field is only calculated on frame rate is set on init().
-int _frameTime = 1000 / VideoFrameRate;
-//For internal use only, this field is set true when ResetViewport() is called.
-bool _isViewportResetRequired = false;
+	IDirect3D9* _d3d = NULL;
+	IDirect3DDevice9* _device = NULL;
+	IDirect3DSurface9* _surface = NULL;
 
-/* Initialize the render device.
+	//For internal use only, this field is used to contain decoded frame while decoding video.
+	AVFrame	*_decodedFrame;
+	//For internal use only, this field is only calculated on frame rate is set on init().
+	int _frameTime = 1000 / VideoFrameRate;
+	//For internal use only, this field is set true when ResetViewport() is called.
+	bool _isViewportResetRequired = false;
 
-@warning This method is only valid when VideoWidth and VideoHeight has valid value.
-*/
-bool initRender();
-//Adjust the VideoRenderArea in VideoViewport, will keep the w-h ratio while adjusting.
-void adjustRenderSize(int videoWidth, int videoHeight);
-bool render(AVFrame* const pFrame);
-void releaseRender();
+	/* Initialize the render device.
 
-/* Initialize decoder.
-@warning This function is not thread safe!
+	@warning This method is only valid when VideoWidth and VideoHeight has valid value.
+	*/
+	bool initRender();
+	//Adjust the VideoRenderArea in VideoViewport, will keep the w-h ratio while adjusting.
+	void adjustRenderSize(int videoWidth, int videoHeight);
+	bool render(AVFrame* const pFrame);
+	void releaseRender();
 
-@param videoRenderHandle, handle of the render target.
-@param frameRate frame rate, max value is 1000.
-		Fill ZERO when use default(30).
-		Fill negative value to use realtime rendering, then Render will not wait interval time between frames.
-@param videoWidth width of the video, fill ZERO when does not know.
-@param videoHeight height of the video, fill ZERO when does not know.
-*/
-extern "C" _declspec(dllexport) bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const videoWidth, int const videoHeight);
+public:
+	/*Flag for working, will be set true when InitDecoder() is called.
+	* Set false when want to stop decoding work.
+	*/
+	bool IsWorking = true;
 
-/* Feed decoder with H264 frame buffer, it will render when frame is decoded.
-@warning This function is not thread safe!
+	/* Initialize decoder.
+	@warning This function is not thread safe!
 
-@param Buffer address of H264 video buffer.
-@param Byte size of the 264 data in buffer.
-*/
-extern "C" _declspec(dllexport) void FeedDecoder(byte* const buffer, int const size);
+	@param videoRenderHandle, handle of the render target.
+	@param frameRate frame rate, max value is 1000.
+	Fill ZERO when use default(30).
+	Fill negative value to use realtime rendering, then Render will not wait interval time between frames.
+	@param videoWidth width of the video, fill ZERO when does not know.
+	@param videoHeight height of the video, fill ZERO when does not know.
+	*/
+	bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const videoWidth, int const videoHeight);
 
-/* Reset viewport of video render device on next frame.
-   Function will get client size from VideoRenderHandle, and create render device again, this action may take longer time between two frames.
-*/
-extern "C" _declspec(dllexport) void ResetViewport();
+	/* Feed decoder with H264 frame buffer, it will render when frame is decoded.
+	@warning This function is not thread safe!
 
-/* Release decoder and render.
-@warning This function is not thread safe!
-*/
-extern "C" _declspec(dllexport) void ReleaseDecoder();
+	@param Buffer address of H264 video buffer.
+	@param Byte size of the 264 data in buffer.
+	*/
+	void FeedDecoder(byte* const buffer, int const size);
+
+	/* Reset viewport of video render device on next frame.
+	Function will get client size from VideoRenderHandle, and create render device again, this action may take longer time between two frames.
+	*/
+	void ResetViewport();
+
+	/* Release decoder and render.
+	@warning This function is not thread safe!
+	*/
+	void ReleaseDecoder();
+};
+
+
+

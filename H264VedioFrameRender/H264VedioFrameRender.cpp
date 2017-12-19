@@ -1,7 +1,7 @@
 #include "H264VedioFrameRender.h"
 
 //todo: try the dangerous part.
-bool initRender()
+bool H264VideoFrameRender::initRender()
 {
 	if (VideoWidth <= 0 || VideoHeight <= 0) {
 		return false;
@@ -33,7 +33,7 @@ bool initRender()
 	return true;
 }
 
-void releaseRender()
+void H264VideoFrameRender::releaseRender()
 {
 	if (_surface) {
 		_surface->Release();
@@ -48,7 +48,7 @@ void releaseRender()
 	}
 }
 
-void adjustRenderSize(int videoWidth, int videoHeight)
+void H264VideoFrameRender::adjustRenderSize(int videoWidth, int videoHeight)
 {
 	int w, h;
 
@@ -69,7 +69,7 @@ void adjustRenderSize(int videoWidth, int videoHeight)
 	VideoRenderArea.bottom = VideoRenderArea.top + h;
 }
 
-bool render(AVFrame* const pFrame)
+bool H264VideoFrameRender::render(AVFrame* const pFrame)
 {
 	if (_surface == NULL) {
 		return false;
@@ -123,7 +123,7 @@ bool render(AVFrame* const pFrame)
 }
 
 //todo: try the dangerous part.
-bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const videoWidth, int const videoHeight)
+bool H264VideoFrameRender::InitDecoder(HWND const videoRenderHandle, int const frameRate, int const videoWidth, int const videoHeight)
 {
 	avcodec_register_all();
 
@@ -179,7 +179,7 @@ bool InitDecoder(HWND const videoRenderHandle, int const frameRate, int const vi
 
 //todo: buffer maybe unsafe or not accessable, so..
 //todo: this method is not thread safe as feed while initializing may cause crash.
-void FeedDecoder(byte* const buffer, int const size)
+void H264VideoFrameRender::FeedDecoder(byte* const buffer, int const size)
 {
 	AVPacket packet;
 
@@ -235,12 +235,12 @@ void FeedDecoder(byte* const buffer, int const size)
 	}
 }
 
-void ResetViewport()
+void H264VideoFrameRender::ResetViewport()
 {
 	_isViewportResetRequired = true;
 }
 
-void ReleaseDecoder()
+void H264VideoFrameRender::ReleaseDecoder()
 {
 	IsWorking = false;
 

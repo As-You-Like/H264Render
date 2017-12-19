@@ -18,8 +18,8 @@ namespace WindowsFormsApp1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            H264Player.Init(panel1.Handle, 30, 0, 0);
-            new Thread(new ThreadStart(readBuffer)).Start();
+            txtLeft.Text = pnlLeft.Handle.ToInt32().ToString();
+            txtCenter.Text = pnlCenter.Handle.ToInt32().ToString();
         }
 
         private void readBuffer()
@@ -34,7 +34,8 @@ namespace WindowsFormsApp1
             while (_isRendering && (len = file.Read(buffer, 0, buffer.Length)) > 0)
             {
                 position += len;
-                H264Player.Decode(buffer, len);
+                H264Player.Decode(0, buffer, len);
+                H264Player.Decode(1, buffer, len);
             }
             H264Player.Release();
         }
@@ -44,14 +45,33 @@ namespace WindowsFormsApp1
             _isRendering = false;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnStopLeft_Click(object sender, EventArgs e)
         {
-            Close();
+            H264Player.ReleaseDecoder(0);
         }
 
-        private void Form1_SizeChanged(object sender, EventArgs e)
+        private void btnStopCenter_Click(object sender, EventArgs e)
         {
-            H264Player.ResetViewport();
+            H264Player.ReleaseDecoder(1);
+        }
+
+        private void pnlLeft_Resize(object sender, EventArgs e)
+        {
+            H264Player.ResetViewport(0);
+        }
+
+        private void pnlCenter_Resize(object sender, EventArgs e)
+        {
+            H264Player.ResetViewport(1);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var is0 = H264Player.Init(2);
+            var is1 = H264Player.InitDecoder(0, pnlLeft.Handle, 30, 0, 0);
+            var is2 = H264Player.InitDecoder(1, pnlCenter.Handle, 30, 0, 0);
+
+            new Thread(new ThreadStart(readBuffer)).Start();
         }
     }
 }
