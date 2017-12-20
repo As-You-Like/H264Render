@@ -65,8 +65,11 @@ void Release()
 	for (int i = 0; i < _streamCount; i++)
 	{
 		render = _streams[i];
-		_streams[i] = NULL;
+		if (render == NULL) {
+			continue;
+		}
 
+		_streams[i] = NULL;
 		render->ReleaseDecoder();
 		delete[] render;
 	}
@@ -76,9 +79,13 @@ void Release()
 
 bool InitDecoder(int streamIndex, HWND const videoRenderHandle, int const frameRate, int const videoWidth, int const videoHeight)
 {
-	if (!_isInitialized || streamIndex < 0 || streamIndex >= _streamCount || _streams[streamIndex] == NULL)
+	if (!_isInitialized || streamIndex < 0 || streamIndex >= _streamCount)
 	{
 		return false;
+	}
+
+	if (_streams[streamIndex] == NULL) {
+		_streams[streamIndex] = new H264VideoFrameRender();
 	}
 
 	return _streams[streamIndex]->InitDecoder(videoRenderHandle, frameRate, videoWidth, videoHeight);
@@ -86,7 +93,7 @@ bool InitDecoder(int streamIndex, HWND const videoRenderHandle, int const frameR
 
 void FeedDecoder(int streamIndex, byte* const buffer, int const size)
 {
-	if (!_isInitialized || streamIndex < 0 || streamIndex >= _streamCount || _streams[streamIndex] == NULL)
+	if (!_isInitialized || _streams[streamIndex] == NULL || streamIndex < 0 || streamIndex >= _streamCount)
 	{
 		return;
 	}
@@ -96,7 +103,7 @@ void FeedDecoder(int streamIndex, byte* const buffer, int const size)
 
 void ResetViewport(int streamIndex)
 {
-	if (!_isInitialized || streamIndex < 0 || streamIndex >= _streamCount || _streams[streamIndex] == NULL)
+	if (!_isInitialized || _streams[streamIndex] == NULL || streamIndex < 0 || streamIndex >= _streamCount)
 	{
 		return;
 	}
@@ -106,12 +113,13 @@ void ResetViewport(int streamIndex)
 
 void ReleaseDecoder(int streamIndex)
 {
-	if (!_isInitialized || streamIndex < 0 || streamIndex >= _streamCount || _streams[streamIndex] == NULL)
+	if (!_isInitialized || _streams[streamIndex] == NULL || streamIndex < 0 || streamIndex >= _streamCount)
 	{
 		return;
 	}
 
-	_streams[streamIndex]->ReleaseDecoder();
-	delete[] _streams[streamIndex];
+	H264VideoFrameRender* render = _streams[streamIndex];
 	_streams[streamIndex] = NULL;
+
+	render->ReleaseDecoder();
 }
