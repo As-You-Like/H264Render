@@ -122,4 +122,5 @@ void ReleaseDecoder(int streamIndex)
 	_streams[streamIndex] = NULL;
 
 	render->ReleaseDecoder();
+	delete[] render;
 }
