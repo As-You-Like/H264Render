@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.pnlCenter = new System.Windows.Forms.Panel();
+            this.txtCenter = new System.Windows.Forms.TextBox();
+            this.btnStart = new System.Windows.Forms.Button();
             this.btnStopCenter = new System.Windows.Forms.Button();
             this.pnlLeft = new System.Windows.Forms.Panel();
+            this.txtLeft = new System.Windows.Forms.TextBox();
             this.btnStopLeft = new System.Windows.Forms.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txtCenter = new System.Windows.Forms.TextBox();
-            this.txtLeft = new System.Windows.Forms.TextBox();
             this.pnlCenter.SuspendLayout();
             this.pnlLeft.SuspendLayout();
             this.SuspendLayout();
@@ -44,7 +44,7 @@
             // 
             this.pnlCenter.BackColor = System.Drawing.SystemColors.Control;
             this.pnlCenter.Controls.Add(this.txtCenter);
-            this.pnlCenter.Controls.Add(this.button1);
+            this.pnlCenter.Controls.Add(this.btnStart);
             this.pnlCenter.Controls.Add(this.btnStopCenter);
             this.pnlCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlCenter.Location = new System.Drawing.Point(203, 0);
@@ -52,6 +52,23 @@
             this.pnlCenter.Size = new System.Drawing.Size(571, 484);
             this.pnlCenter.TabIndex = 0;
             this.pnlCenter.Resize += new System.EventHandler(this.pnlCenter_Resize);
+            // 
+            // txtCenter
+            // 
+            this.txtCenter.Location = new System.Drawing.Point(6, 12);
+            this.txtCenter.Name = "txtCenter";
+            this.txtCenter.Size = new System.Drawing.Size(100, 20);
+            this.txtCenter.TabIndex = 2;
+            // 
+            // btnStart
+            // 
+            this.btnStart.Location = new System.Drawing.Point(156, 9);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(75, 23);
+            this.btnStart.TabIndex = 1;
+            this.btnStart.Text = "Start";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // btnStopCenter
             // 
@@ -74,6 +91,13 @@
             this.pnlLeft.TabIndex = 1;
             this.pnlLeft.Resize += new System.EventHandler(this.pnlLeft_Resize);
             // 
+            // txtLeft
+            // 
+            this.txtLeft.Location = new System.Drawing.Point(11, 3);
+            this.txtLeft.Name = "txtLeft";
+            this.txtLeft.Size = new System.Drawing.Size(100, 20);
+            this.txtLeft.TabIndex = 3;
+            // 
             // btnStopLeft
             // 
             this.btnStopLeft.Location = new System.Drawing.Point(36, 44);
@@ -91,30 +115,6 @@
             this.splitter1.Size = new System.Drawing.Size(3, 484);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(250, 44);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // txtCenter
-            // 
-            this.txtCenter.Location = new System.Drawing.Point(6, 12);
-            this.txtCenter.Name = "txtCenter";
-            this.txtCenter.Size = new System.Drawing.Size(100, 20);
-            this.txtCenter.TabIndex = 2;
-            // 
-            // txtLeft
-            // 
-            this.txtLeft.Location = new System.Drawing.Point(11, 3);
-            this.txtLeft.Name = "txtLeft";
-            this.txtLeft.Size = new System.Drawing.Size(100, 20);
-            this.txtLeft.TabIndex = 3;
             // 
             // Form1
             // 
@@ -143,7 +143,7 @@
         private System.Windows.Forms.Panel pnlLeft;
         private System.Windows.Forms.Button btnStopLeft;
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox txtCenter;
         private System.Windows.Forms.TextBox txtLeft;
     }

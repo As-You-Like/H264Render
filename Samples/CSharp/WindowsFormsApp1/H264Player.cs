@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace WindowsFormsApp1
 {
-    internal class H264Player
+    internal class H264PlayerM
     {
         const string H264Decoder = "H264VedioFrameRender.dll";
 
