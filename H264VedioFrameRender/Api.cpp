@@ -84,9 +84,11 @@ bool InitDecoder(int streamIndex, HWND const videoRenderHandle, int const frameR
 		return false;
 	}
 
-	if (_streams[streamIndex] == NULL) {
-		_streams[streamIndex] = new H264VideoFrameRender();
+	if (_streams[streamIndex] != NULL) {
+		_streams[streamIndex]->IsWorking = false;
+		ReleaseDecoder(streamIndex);
 	}
+	_streams[streamIndex] = new H264VideoFrameRender();
 
 	return _streams[streamIndex]->InitDecoder(videoRenderHandle, frameRate, videoWidth, videoHeight);
 }
